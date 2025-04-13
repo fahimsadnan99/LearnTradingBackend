@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const { errorHandler } = require('../utils/errorHandler');
 
 // Generate JWT token
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET);
+const generateToken = (user) => {
+    return jwt.sign({ id: user._id, name:user.name, UID:user.UID, status:user.status, userType:user.userType }, process.env.JWT_SECRET);
 };
 
 // Register user
@@ -30,7 +30,7 @@ exports.register = async (req, res, next) => {
         user.password = undefined;
 
         res.status(201).json({
-            status: 'success',
+            status: 'account created successfully',
             data: {
                 user
             }
@@ -47,33 +47,32 @@ exports.login = async (req, res, next) => {
 
         // Check if UID and password exist
         if (!UID || !password) {
-            return errorHandler(res, 400, 'Please provide UID and password', '@TraderSadnan');
+            return errorHandler(res, 400, 'Please provide UID and password Please contact with Telegram @TraderSadnan', '@TraderSadnan');
         }
 
         // Check if user exists and password is correct
         const user = await User.findOne({ UID }).select('+password');
 
         if (!user || !(await user.isPasswordCorrect(password))) {
-            return errorHandler(res, 401, 'Invalid credentials', '@TraderSadnan');
+            return errorHandler(res, 401, 'Invalid credentials Please contact with Telegram @TraderSadnan', '@TraderSadnan');
         }
 
         // Check if user is active
         if (user.status === 'inactive') {
-            return errorHandler(res, 403, 'Your account is not active. Please contact admin', '@TraderSadnan');
+            return errorHandler(res, 403, 'Your account is not active. Please contact with Telegram @TraderSadnan', '@TraderSadnan');
         }
 
         // Check if user already logged in on another device
         if (user.deviceId) {
-            return errorHandler(res, 403, 'User already logged in on another device', '@TraderSadnan');
+            return errorHandler(res, 403, 'User already logged in on another device Please contact with Telegram @TraderSadnan', '@TraderSadnan');
         }
 
         // Generate device ID
-        const deviceId = user.generateDeviceId();
-        user.deviceId = deviceId;
+        user.deviceId =  user.generateDeviceId();
         await user.save({ validateBeforeSave: false });
 
         // Generate token
-        const token = generateToken(user._id);
+        const token = generateToken(user);
 
         // Don't send password in response
         user.password = undefined;
@@ -92,8 +91,10 @@ exports.login = async (req, res, next) => {
 
 // Logout user
 exports.logout = async (req, res, next) => {
+
+    const {id} = req.body
     try {
-        const user = await User.findById(req.user._id);
+        const user = await User.findById(id);
         user.deviceId = null;
         await user.save({ validateBeforeSave: false });
 

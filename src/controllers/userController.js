@@ -4,7 +4,7 @@ const { errorHandler } = require('../utils/errorHandler');
 // Get all users (admin only)
 exports.getAllUsers = async (req, res, next) => {
     try {
-        let query = { _id: { $ne: req.user._id } };
+        let query = {};
 
         // Apply search filters
         if (req.query.name) {
@@ -22,7 +22,7 @@ exports.getAllUsers = async (req, res, next) => {
 
         // Pagination
         const page = parseInt(req.query.page, 10) || 1;
-        const limit = parseInt(req.query.limit, 10) || 10;
+        const limit = parseInt(req.query.limit, 10) || 25;
         const skip = (page - 1) * limit;
 
         const users = await User.find(query)
@@ -32,15 +32,29 @@ exports.getAllUsers = async (req, res, next) => {
             .sort('name');
 
         const total = await User.countDocuments(query);
+        const lastPage = Math.ceil(total / limit);
+
+        // Build base URL without query parameters
+        const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`;
+
+        // Build links
+        const links = {
+            first: `${baseUrl}?page=1&limit=${limit}`,
+            last: `${baseUrl}?page=${lastPage}&limit=${limit}`,
+            prev: page > 1 ? `${baseUrl}?page=${page - 1}&limit=${limit}` : null,
+            next: page < lastPage ? `${baseUrl}?page=${page + 1}&limit=${limit}` : null
+        };
 
         res.status(200).json({
-            status: 'success',
-            results: users.length,
-            totalPages: Math.ceil(total / limit),
-            currentPage: page,
-            data: {
-                users
-            }
+            current_page: page,
+            from: skip + 1,
+            last_page: lastPage,
+            links: links,
+            path: baseUrl,
+            per_page: limit,
+            to: Math.min(skip + limit, total),
+            total: total,
+            data: users
         });
     } catch (error) {
         next(error);

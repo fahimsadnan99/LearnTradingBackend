@@ -6,9 +6,10 @@ const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 // Auth routes
-router.post('/register', authController.register);
-router.post('/login', authController.login);
-router.post('/logout', authMiddleware.protect, authController.logout);
+router.post('/auth/register', authController.register);
+router.post('/auth/login', authController.login);
+router.post('/auth/logout', authMiddleware.protect,
+    authMiddleware.UserTypeCheck('admin'),  authController.logout);
 
 // User management routes (admin only)
 router.get(
@@ -20,7 +21,7 @@ router.get(
 
 // Fixed route - ensure the parameter is properly formatted
 router.delete(
-    '/users/:id',
+    '/user/:id/delete',
     authMiddleware.protect,
     authMiddleware.UserTypeCheck('admin'),
     userController.deleteUser
