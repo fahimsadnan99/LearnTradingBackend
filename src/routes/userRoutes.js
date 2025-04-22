@@ -35,4 +35,14 @@ router.patch(
     userController.updateUserStatus
 );
 
+router.patch(
+    '/users/:id/status',
+    authMiddleware.protect,
+    authMiddleware.UserTypeCheck('admin'),
+    userController.updateUserStatus
+);
+
+
 module.exports = router;
+
+//here change
