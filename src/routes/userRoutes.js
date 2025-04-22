@@ -42,6 +42,16 @@ router.patch(
     userController.updateUserStatus
 );
 
+router.get(
+    '/users/check',
+    authMiddleware.protect,
+    (req, res) => {
+        return res.status(200).json({ isValid: true });
+    }
+);
+
+
+
 
 module.exports = router;
 
