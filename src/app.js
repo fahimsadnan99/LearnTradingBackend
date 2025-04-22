@@ -44,7 +44,7 @@ app.use('/api', userRoutes);
 app.get('/', (req, res) => {
     res.status(200).json({
         status: 'success',
-        message: 'Welcome to User Management API'
+        message: 'Welcome to User Management API change '
     });
 });
 
