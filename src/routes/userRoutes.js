@@ -43,7 +43,7 @@ router.patch(
 );
 
 router.get(
-    '/users/check',
+    '/token/check',
     authMiddleware.protect,
     (req, res) => {
         return res.status(200).json({ isValid: true });
