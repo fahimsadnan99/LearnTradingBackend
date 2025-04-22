@@ -15,27 +15,9 @@ const app = express();
 // Middleware
 app.use(morgan('dev'));
 app.use(express.json());
-const allowedOrigins = [
-    'https://adminsadnan.netlify.app',
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:5001'
-];
-
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', "PUT"],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+    origin: '*'
+}));
 
 // Routes - import routes directly here to ensure they're loaded correctly
 const userRoutes = require('./routes/userRoutes');
@@ -44,7 +26,7 @@ app.use('/api', userRoutes);
 app.get('/', (req, res) => {
     res.status(200).json({
         status: 'success',
-        message: 'Welcome to User Management API change '
+        message: 'Welcome to User Management API change new v1.1.1 '
     });
 });
 
