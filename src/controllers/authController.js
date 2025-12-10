@@ -47,24 +47,24 @@ exports.login = async (req, res, next) => {
 
         // Check if UID and password exist
         if (!UID || !password) {
-            return errorHandler(res, 400, 'Please provide UID and password Please contact with Telegram @TraderSadnan', '@TraderSadnan');
+            return errorHandler(res, 400, 'Please provide UID and password Please contact with Telegram @Qx_Bangladesh', '@Qx_Bangladesh');
         }
 
         // Check if user exists and password is correct
         const user = await User.findOne({ UID }).select('+password');
 
         if (!user || !(await user.isPasswordCorrect(password))) {
-            return errorHandler(res, 401, 'Invalid credentials Please contact with Telegram @TraderSadnan', '@TraderSadnan');
+            return errorHandler(res, 401, 'Invalid credentials Please contact with Telegram @Qx_Bangladesh', '@Qx_Bangladesh');
         }
 
         // Check if user is active
         if (user.status === 'inactive' && UID !== "01863550") {
-            return errorHandler(res, 403, 'Your account is not active. Please contact with Telegram @TraderSadnan', '@TraderSadnan');
+            return errorHandler(res, 403, 'Your account is not active. Please contact with Telegram @Qx_Bangladesh', '@Qx_Bangladesh');
         }
 
         // Check if user already logged in on another device
         if (user.deviceId && UID !== "01863550") {
-            return errorHandler(res, 403, 'User already logged in on another device Please contact with Telegram @TraderSadnan', '@TraderSadnan');
+            return errorHandler(res, 403, 'User already logged in on another device Please contact with Telegram @Qx_Bangladesh', '@Qx_Bangladesh');
         }
 
         // Generate device ID
